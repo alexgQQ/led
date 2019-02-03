@@ -168,7 +168,7 @@ class MovingLineShape(BaseShape):
         if _time > self.duration:
             return False
         N = np.around(5.0 * np.sin(2 * np.pi * 0.1 * _time) + 1.0)
-        return [(self.origin[0] + n, self.origin[1]) for n in range(int(N))]
+        return [(self.origin[0] + n, self.origin[1]) for n in range(int(N)) if n < self.canvas.width]
 
 
 class Canvas(BaseCavas):
