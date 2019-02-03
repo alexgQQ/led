@@ -183,7 +183,7 @@ if __name__ == '__main__':
     led.begin()
 
     print('Running animation...')
-    canvas = BaseCavas()
-    canvas.shapes = [BaseShape(canvas, color_scheme=BaseColorScheme) for _ in range(5)]
+    canvas = Canvas()
+    canvas.shapes = [MovingLineShape(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
     runner = FrameRunner(led, canvas=canvas)
     runner.run()
