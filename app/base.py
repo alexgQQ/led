@@ -200,6 +200,16 @@ class PulsingColorScheme(BaseColorScheme):
         return [ColorHSV.color(self.hue, val, 0.7) for location in locations]
 
 
+class FlareColorScheme(BaseColorScheme):
+    def generator(self, _time, locations):
+        if not hasattr(self, 'hue'):
+            self.hue = random.uniform(0.0, 1.0)
+        if not hasattr(self, 'pulse_freq'):
+            self.pulse_freq = random.uniform(0.1, 0.5)
+        val = 0.3 * np.sin(2 * np.pi * self.pulse_freq * _time) + 0.5
+        return [ColorHSV.color(self.hue, 1.0, val) for location in locations]
+
+
 class MovingLineShape(BaseShape):
     def generator(self, _time):
         if _time > self.duration:
@@ -216,6 +226,19 @@ class MovingPoint(BaseShape):
         if new_pos >= self.canvas.width:
             return False
         return [(new_pos, self.origin[1])]
+
+
+class FlareShape(BaseShape):
+    def generator(self, _time):
+        if not hasattr(self, 'speed'):
+            self.speed = random.uniform(1.0, 5.0)
+        if not hasattr(self, 'sway_freq'):
+            self.sway_freq = random.uniform(0.1, 0.7)
+        sway = 2 * np.sin(2 * np.pi * self.sway_freq * _time)
+        new_pos = self.origin[0] + (self.speed * _time)
+        if new_pos >= self.canvas.width:
+            return False
+        return [(new_pos, self.origin[1] + sway)]
 
 
 if __name__ == '__main__':
