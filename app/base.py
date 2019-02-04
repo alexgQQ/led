@@ -203,7 +203,9 @@ class PulsingColorScheme(BaseColorScheme):
 class FlareColorScheme(BaseColorScheme):
     def generator(self, _time, locations):
         if not hasattr(self, 'hue'):
-            self.hue = random.uniform(0.0, 1.0)
+            hue_max = 0.5 * np.sin(2 * np.pi * 0.5 * self.shape.time_start ) + 0.5
+            hue_min = 0.4 * np.sin(2 * np.pi * 0.5 * self.shape.time_start ) + 0.5
+            self.hue = random.uniform(hue_min, hue_max)
         if not hasattr(self, 'pulse_freq'):
             self.pulse_freq = random.uniform(0.1, 0.5)
         val = 0.4 * np.sin(2 * np.pi * self.pulse_freq * _time) + 0.5
@@ -248,6 +250,6 @@ if __name__ == '__main__':
 
     print('Running animation...')
     canvas = BaseCavas()
-    canvas.shapes = [BaseShape(canvas, color_scheme=FlareColorScheme) for _ in range(5)]
+    canvas.shapes = [BaseShape(canvas, color_scheme=FlareColorScheme) for _ in range(4)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
