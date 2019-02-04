@@ -118,12 +118,13 @@ class BaseShape:
         self.canvas.shapes_buffer.append(new_shape)
 
     def clean_points(self, data):
+        new_data = []
         for point in data:
             valid = (point[0] < self.canvas.width
                     and point[1] < self.canvas.height)
-            if not valid:
-                data.remove(point)
-        return data
+            if valid:
+                new_data.append(point)
+        return new_data
 
     def update(self, _time):
         # Normalize time for the shape
