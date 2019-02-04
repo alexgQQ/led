@@ -64,18 +64,10 @@ class BaseCavas:
             # Only take valid data, let shape handle deconstruction
             if updates:
                 self.pixels.update(updates)
-                self.handle_update(shape)
-            else:
-                self.handle_removal(shape)
+                self.shapes_buffer.append(shape)
         self.shapes = self.shapes_buffer
         # Add frame counter
         self.ticks += 1.0
-
-    def handle_update(self, obj):
-        self.shapes_buffer.append(obj)
-
-    def handle_removal(self, obj):
-        self.shapes_buffer.append(obj.__class__(self, start_time=self.now))
 
 
 class BaseColorScheme:
@@ -113,7 +105,16 @@ class BaseShape:
         self.duration = 3.0
         # Current time of creation
         self.time_start = start_time
+        self.color_class = color_scheme
         self.color_scheme = color_scheme(self)
+
+    def on_exit(self):
+        # Make a new obj of the same class
+        t = self.time_start + self.duration
+        new_shape = self.__class__(self.canvas,
+                                   start_time=t,
+                                   color_scheme=self.color_class)
+        self.canvas.shapes_buffer.append(new_shape)
 
     def update(self, _time):
         # Normalize time for the shape
@@ -121,6 +122,7 @@ class BaseShape:
         locations = self.generator(_time)
         # Updates over, remove from canvas
         if not locations:
+            self.on_exit()
             return False
         self.colors = self.color_scheme.update(_time, locations)
         return dict(zip(locations, self.colors))
@@ -184,6 +186,6 @@ if __name__ == '__main__':
 
     print('Running animation...')
     canvas = Canvas()
-    canvas.shapes = [MovingLineShape(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
+    canvas.shapes = [BaseShape(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
     runner = FrameRunner(led, canvas=canvas)
     runner.run()
