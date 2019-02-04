@@ -185,6 +185,15 @@ class MovingLineShape(BaseShape):
         return [(self.origin[0] + n, self.origin[1]) for n in range(int(N))]
 
 
+class MovingPoint(BaseShape):
+    def generator(self, _time):
+        speed = 3 # 3 pixels per second
+        new_pos = self.origin[0] + (speed * _time)
+        if new_pos >= self.canvas.width:
+            return False
+        return [(new_pos, self.origin[1])]
+
+
 if __name__ == '__main__':
     print('Starting Adafruit LED driver...')
     led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
@@ -192,6 +201,6 @@ if __name__ == '__main__':
 
     print('Running animation...')
     canvas = BaseCavas()
-    canvas.shapes = [MovingLineShape(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
+    canvas.shapes = [MovingPoint(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
     runner = FrameRunner(led, canvas=canvas)
     runner.run()
