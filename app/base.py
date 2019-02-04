@@ -103,7 +103,7 @@ class BaseShape:
             self.origin = (random.randint(0, self.canvas.width - 1),
                            random.randint(0, self.canvas.height - 1))
         # Duration of shape in seconds
-        self.duration = 3.0
+        self.duration = random.uniform(3.0, 4.0)
         # Current time of creation
         self.time_start = start_time
         self.color_class = color_scheme
