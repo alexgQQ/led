@@ -2,6 +2,7 @@ import numpy as np
 import random
 import colorsys
 import time
+import traceback
 from neopixel import Adafruit_NeoPixel, Color
 from config import LED_MATRIX_CONFIG
 
@@ -161,6 +162,7 @@ class FrameRunner:
                 self.led.show()
                 time.sleep(1.0/self.fps)
         except Exception as error:
+            traceback.print_exc()
             print('!! Caught exception, ', error)
         except:
             print('!! Uncaught exception !!')
