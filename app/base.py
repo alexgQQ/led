@@ -123,7 +123,11 @@ class BaseShape:
             valid = (point[0] < self.canvas.width
                     and point[1] < self.canvas.height)
             if valid:
-                new_data.append(point)
+                try:
+                    point = (int(point[0]), int(point[1]))
+                    new_data.append(point)
+                except:
+                    pass
         return new_data
 
     def update(self, _time):
