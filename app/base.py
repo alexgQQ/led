@@ -207,8 +207,9 @@ class FlareColorScheme(BaseColorScheme):
             hue_min = 0.4 * np.sin(2 * np.pi * 0.5 * self.shape.time_start ) + 0.5
             self.hue = random.uniform(hue_min, hue_max)
         if not hasattr(self, 'pulse_freq'):
-            self.pulse_freq = random.uniform(0.1, 0.5)
-        val = 0.4 * np.sin(2 * np.pi * self.pulse_freq * _time) + 0.5
+            duration = self.shape.duration * 2.0
+            self.pulse_freq = 1.0/duration
+        val = 0.9 * np.sin(2 * np.pi * self.pulse_freq * _time)
         return [ColorHSV.color(self.hue, 1.0, val) for location in locations]
 
 
