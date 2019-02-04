@@ -192,6 +192,14 @@ class RainbowColorScheme(BaseColorScheme):
         return [ColorHSV.color(hue, 1.0, 0.7) for location in locations]
 
 
+class PulsingColorScheme(BaseColorScheme):
+    def generator(self, _time, locations):
+        if not hasattr(self, 'hue'):
+            self.hue = random.uniform(0.0, 1.0)
+        val = 0.5 * np.sin(2 * np.pi * 0.2 * _time) + 0.5
+        return [ColorHSV.color(self.hue, val, 0.7) for location in locations]
+
+
 class MovingLineShape(BaseShape):
     def generator(self, _time):
         if _time > self.duration:
@@ -202,8 +210,9 @@ class MovingLineShape(BaseShape):
 
 class MovingPoint(BaseShape):
     def generator(self, _time):
-        speed = 3 # 3 pixels per second
-        new_pos = self.origin[0] + (speed * _time)
+        if not hasattr(self, 'speed'):
+            self.speed = random.uniform(1.0, 5.0)
+        new_pos = self.origin[0] + (self.speed * _time)
         if new_pos >= self.canvas.width:
             return False
         return [(new_pos, self.origin[1])]
@@ -216,6 +225,6 @@ if __name__ == '__main__':
 
     print('Running animation...')
     canvas = BaseCavas()
-    canvas.shapes = [MovingPoint(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
-    runner = FrameRunner(led, canvas=canvas, debug=True)
+    canvas.shapes = [MovingPoint(canvas, color_scheme=PulsingColorScheme) for _ in range(5)]
+    runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
