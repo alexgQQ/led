@@ -206,7 +206,7 @@ class FlareColorScheme(BaseColorScheme):
             self.hue = random.uniform(0.0, 1.0)
         if not hasattr(self, 'pulse_freq'):
             self.pulse_freq = random.uniform(0.1, 0.5)
-        val = 0.3 * np.sin(2 * np.pi * self.pulse_freq * _time) + 0.5
+        val = 0.4 * np.sin(2 * np.pi * self.pulse_freq * _time) + 0.5
         return [ColorHSV.color(self.hue, 1.0, val) for location in locations]
 
 
@@ -248,6 +248,6 @@ if __name__ == '__main__':
 
     print('Running animation...')
     canvas = BaseCavas()
-    canvas.shapes = [FlareShape(canvas, color_scheme=FlareColorScheme) for _ in range(5)]
+    canvas.shapes = [BaseShape(canvas, color_scheme=FlareColorScheme) for _ in range(5)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
