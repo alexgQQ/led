@@ -149,16 +149,27 @@ class BaseShape:
 
 
 class FrameRunner:
-    def __init__(self, led, canvas):
+    def __init__(self, led, canvas, debug=None):
         self.led = led
         self.led_data = led.getPixels()
         self.fps = 60.0
         self.canvas = canvas
+        self.debug = debug
+
+    def debugger(self):
+        import pprint
+        print('### Pixels ###')
+        pprint.pprint(self.canvas.pixels)
+        print('### Shapes ###')
+        for each in self.canvas.shapes:
+            pprint.pprint(each.__dict__)
     
     def run(self):
         try:
             while True:
                 self.canvas.update()
+                if self.debug:
+                    self.debugger()
                 self.led_data[:] = self.canvas.render_frame()
                 self.led.show()
                 time.sleep(1.0/self.fps)
@@ -202,5 +213,5 @@ if __name__ == '__main__':
     print('Running animation...')
     canvas = BaseCavas()
     canvas.shapes = [MovingPoint(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
-    runner = FrameRunner(led, canvas=canvas)
+    runner = FrameRunner(led, canvas=canvas, debug=True)
     runner.run()
