@@ -116,6 +116,14 @@ class BaseShape:
                                    color_scheme=self.color_class)
         self.canvas.shapes_buffer.append(new_shape)
 
+    def clean_points(self, data):
+        for point in data:
+            valid = (point[0] < self.canvas.width
+                    and point[1] < self.canvas.height)
+            if not valid:
+                data.remove(point)
+        return data
+
     def update(self, _time):
         # Normalize time for the shape
         _time = _time - self.time_start
@@ -124,6 +132,7 @@ class BaseShape:
         if not locations:
             self.on_exit()
             return False
+        locations = self.clean_points(locations)
         self.colors = self.color_scheme.update(_time, locations)
         return dict(zip(locations, self.colors))
 
@@ -170,13 +179,7 @@ class MovingLineShape(BaseShape):
         if _time > self.duration:
             return False
         N = np.around(5.0 * np.sin(2 * np.pi * 0.1 * _time) + 1.0)
-        return [(self.origin[0] + n, self.origin[1]) for n in range(int(N)) if n < self.canvas.width]
-
-
-class Canvas(BaseCavas):
-    def handle_removal(self, obj):
-        self.shapes_buffer.append(MovingLineShape(
-            self, start_time=self.now, color_scheme=RainbowColorScheme))
+        return [(self.origin[0] + n, self.origin[1]) for n in range(int(N))]
 
 
 if __name__ == '__main__':
@@ -185,7 +188,7 @@ if __name__ == '__main__':
     led.begin()
 
     print('Running animation...')
-    canvas = Canvas()
-    canvas.shapes = [BaseShape(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
+    canvas = BaseCavas()
+    canvas.shapes = [MovingLineShape(canvas, color_scheme=RainbowColorScheme) for _ in range(5)]
     runner = FrameRunner(led, canvas=canvas)
     runner.run()
