@@ -33,7 +33,7 @@ class ColorHSV(ColorRGB):
         return cls.color_rgb(*cls.hsv2rgb(hue, saturation, value))
 
 
-class BaseCavas:
+class BaseCanvas:
     def __init__(self):
         self.ticks = 0.0
         self.width = 32
@@ -86,7 +86,7 @@ class BaseColorScheme:
     def generator(self, _time, locations):
         """
         Override this method for new colors. 
-        This method must return an iterable of colors, or False.
+        This method must return an iterable of colors.
         """
         return [ColorRGB.color(50, 50, 50) for location in locations]
 
@@ -200,19 +200,6 @@ class PulsingColorScheme(BaseColorScheme):
         return [ColorHSV.color(self.hue, val, 0.7) for location in locations]
 
 
-class FlareColorScheme(BaseColorScheme):
-    def generator(self, _time, locations):
-        if not hasattr(self, 'hue'):
-            hue_max = 0.5 * np.sin(2 * np.pi * 0.5 * self.shape.time_start ) + 0.5
-            hue_min = 0.4 * np.sin(2 * np.pi * 0.5 * self.shape.time_start ) + 0.5
-            self.hue = random.uniform(hue_min, hue_max)
-        if not hasattr(self, 'pulse_freq'):
-            duration = self.shape.duration * 2.0
-            self.pulse_freq = 1.0/duration
-        val = 0.9 * np.sin(2 * np.pi * self.pulse_freq * _time)
-        return [ColorHSV.color(self.hue, 1.0, val) for location in locations]
-
-
 class MovingLineShape(BaseShape):
     def generator(self, _time):
         if _time > self.duration:
@@ -250,7 +237,7 @@ if __name__ == '__main__':
     led.begin()
 
     print('Running animation...')
-    canvas = BaseCavas()
+    canvas = BaseCanvas()
     canvas.shapes = [BaseShape(canvas, color_scheme=FlareColorScheme) for _ in range(4)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
