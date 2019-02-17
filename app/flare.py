@@ -1,8 +1,7 @@
 import time
 import random
 import numpy as np
-import sys
-import colorsys
+import argparse
 
 from base import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV
 from neopixel import Adafruit_NeoPixel, Color
@@ -23,12 +22,19 @@ class FlareColorScheme(BaseColorScheme):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Config options for flare light application')
+
+    parser.add_argument('-n', action="store", dest="n", type=int, const=1, nargs='?', default=1)
+    results = parser.parse_args()
+
+    num_of_lights = results.n
+
     print('Starting Adafruit LED driver...')
     led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
     led.begin()
 
     print('Running animation...')
     canvas = BaseCanvas()
-    canvas.shapes = [BaseShape(canvas, color_scheme=FlareColorScheme) for _ in range(4)]
+    canvas.shapes = [BaseShape(canvas, color_scheme=FlareColorScheme) for _ in range(num_of_lights)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
