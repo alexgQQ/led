@@ -2,25 +2,18 @@ FROM resin/rpi-raspbian:stretch
 
 # Required ===================================
 
-RUN apt-get update
-
-RUN /bin/bash -c 'apt-get install -yq python3 \
-                                      python3-dev \
-                                      python3-pip \
-                                      --no-install-recommends'
+RUN apt-get update && apt-get install -yq \
+    python3 \
+    python3-dev \
+    python3-pip --no-install-recommends \
+    python3-numpy \
+    build-essential \
+    libjpeg-dev \
+    swig    \
+    scons   \
+    git
 
 RUN pip3 install --upgrade pip
-# RUN pip3 install ipdb
-
-# Needed for LED Control
-RUN /bin/bash -c 'apt-get install -y -q build-essential   \
-                                        libjpeg-dev       \
-                                        swig              \
-                                        scons             \
-                                        git'
-
-# Special Python dependencies
-RUN /bin/bash -c 'apt-get install -y -q python3-numpy'
 
 # Copy Driver source files
 COPY ./lib /leds
