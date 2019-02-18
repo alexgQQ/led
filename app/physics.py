@@ -83,7 +83,10 @@ class Shape(BaseShape):
         pass
 
     def generator(self, _time):
-        return [self.body._body.position.int_tuple]
+        x, y = self.body._body.position.int_tuple
+        x /= 10
+        y /= 10
+        return [(int(x), int(y))]
 
 
 if __name__ == '__main__':
