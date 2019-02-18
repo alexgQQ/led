@@ -76,9 +76,9 @@ class Canvas(BaseCanvas):
         shapes = []
         for shape in self.shapes:
             body = shape.body.body.position.int_tuple
-            out_of_bounds = (body < (0.0, 0.0) or body > (80.0, 320.0))
+            out_of_bounds = (body < (-20.0, -20.0) or body > (340.0, 100.0))
             if out_of_bounds:
-                self.space.remove(shape.body, shape.body.body)
+                self.space._space.remove(shape.body, shape.body.body)
                 shapes.append(Shape(canvas=self, start_time=self.now, color_scheme=RainbowColorScheme))
             else:
                 shapes.append(shape)
