@@ -120,8 +120,8 @@ class BaseShape:
     def clean_points(self, data):
         new_data = []
         for point in data:
-            valid = (point[0] < self.canvas.width
-                    and point[1] < self.canvas.height)
+            valid = (abs(point[0]) < self.canvas.width
+                    and abs(point[1]) < self.canvas.height)
             if valid:
                 try:
                     point = (int(point[0]), int(point[1]))
