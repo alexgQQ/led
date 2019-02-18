@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -yq \
     git
 
 RUN pip3 install --upgrade pip
+RUN pip3 install pymunk
 
 # Copy Driver source files
 COPY ./lib /leds
