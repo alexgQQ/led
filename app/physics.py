@@ -71,7 +71,7 @@ class Canvas(BaseCanvas):
 
     def update(self):
         super().update()
-        self.space.step()
+        self.space._step()
 
 
 class Shape(BaseShape):
