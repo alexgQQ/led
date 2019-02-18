@@ -72,9 +72,23 @@ class Canvas(BaseCanvas):
         super().__init__()
         self.space = space
 
+    def clean_shapes(self):
+        shapes = []
+        for shape in self.shapes:
+            body = shape.body.body.position.int_tuple
+            out_of_bounds = (body < (0.0, 0.0) or body > (80.0, 320.0))
+            if out_of_bounds:
+                self.space.remove(shape.body, shape.body.body)
+                shapes.append(Shape(canvas=self, start_time=self.now, color_scheme=RainbowColorScheme))
+            else:
+                shapes.append(shape)
+        self.shapes = shapes
+                
+
     def update(self):
         super().update()
         self.space._step()
+        self.clean_shapes()
 
 
 class Shape(BaseShape):
@@ -83,20 +97,18 @@ class Shape(BaseShape):
         x, y = self.origin
         pos = (x * 10.0, y * 10.0)
         self.body = self.canvas.space._create_ball(position=pos)
-        self.body.body.apply_impulse_at_world_point(
-            (random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)),
-             (random.uniform(0.0, 10.0), random.uniform(0.0, 10.0)))
+        self.apply_force()
 
     def on_exit(self):
         pass
 
     def apply_force(self):
         self.body.body.apply_impulse_at_world_point(
-            (random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)),
-             (random.uniform(0.0, 10.0), random.uniform(0.0, 10.0)))
+            (random.uniform(-50.0, 50.0), random.uniform(-50.0, 50.0)),
+             (random.uniform(0.0, 320.0), random.uniform(0.0, 80.0)))
 
     def generator(self, _time):
-        if self.body.body.velocity == 0.0:
+        if self.body.body.velocity.length < 30.0:
             self.apply_force()
         x, y = self.body._body.position.int_tuple
         x /= 10
