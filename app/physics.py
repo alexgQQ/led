@@ -103,7 +103,7 @@ if __name__ == '__main__':
     point = sim._balls[0]
 
     print('Running animation...')
-    canvas = Canvas()
+    canvas = Canvas(sim)
     canvas.shapes = [Shape(canvas=canvas, origin=point._body.position.int_tuple, body=point) for _ in range(num_of_lights)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
