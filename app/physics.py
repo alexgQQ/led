@@ -4,7 +4,7 @@ import numpy as np
 import argparse
 import pymunk
 
-from base import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV
+from base import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV, RainbowColorScheme
 from neopixel import Adafruit_NeoPixel, Color
 from config import LED_MATRIX_CONFIG
 
@@ -51,17 +51,20 @@ class BouncyBalls(object):
             line.friction = 0.9
         self._space.add(static_lines)
 
-    def _create_ball(self):
+    def _create_ball(self, position=None):
         mass = 5
         radius = 5
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
         body = pymunk.Body(mass, inertia)
         body.position = 160, 70
+        if position:
+            body.position = position
         shape = pymunk.Circle(body, radius, (0, 0))
         shape.elasticity = 0.95
         shape.friction = 0.9
         self._space.add(body, shape)
         self._balls.append(shape)
+        return shape
 
 
 class Canvas(BaseCanvas):
@@ -77,7 +80,10 @@ class Canvas(BaseCanvas):
 class Shape(BaseShape):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.body = kwargs.get('body', None)
+        self.body = self.canvas.space._create_ball(position=self.origin)
+        self.body.body.apply_impulse_at_world_point(
+            (random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)),
+             (random.uniform(0.0, 10.0), random.uniform(0.0, 10.0)))
 
     def on_exit(self):
         pass
@@ -102,12 +108,10 @@ if __name__ == '__main__':
     led.begin()
 
     sim = BouncyBalls()
-    sim._create_ball()
-    point = sim._balls[0]
-    point.body.apply_impulse_at_world_point((1000,0), (0,10))
 
     print('Running animation...')
     canvas = Canvas(sim)
-    canvas.shapes = [Shape(canvas=canvas, origin=point._body.position.int_tuple, body=point) for _ in range(num_of_lights)]
+    canvas.shapes = [Shape(canvas=canvas)
+                     for _ in range(num_of_lights)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
