@@ -96,8 +96,7 @@ class Shape(BaseShape):
              (random.uniform(0.0, 10.0), random.uniform(0.0, 10.0)))
 
     def generator(self, _time):
-        if _time > self.duration:
-            self.time_start += _time
+        if self.body.body.velocity == 0.0:
             self.apply_force()
         x, y = self.body._body.position.int_tuple
         x /= 10
