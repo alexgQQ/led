@@ -75,7 +75,7 @@ class BaseColorScheme:
     """
     Base class to control color generation.
     """
-    def __init__(self, shape):
+    def __init__(self, shape, **kwargs):
         self.shape = shape
 
     def update(self, _time, locations):
@@ -95,7 +95,7 @@ class BaseShape:
     """
     Base class to control shape generation.
     """
-    def __init__(self, canvas=None, duration=None, origin=None, start_time=0.0, color_scheme=BaseColorScheme):
+    def __init__(self, canvas=None, duration=None, origin=None, start_time=0.0, color_scheme=BaseColorScheme, **kwargs):
         self.canvas = canvas
         # Origin location of shape
         self.origin = origin
