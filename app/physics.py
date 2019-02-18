@@ -13,7 +13,7 @@ class BouncyBalls(object):
     def __init__(self):
         # Space
         self._space = pymunk.Space()
-        self._space.gravity = (0.0, -900.0)
+        self._space.gravity = (0.0, 900.0)
 
         # Time step
         self._dt = 1.0 / 60.0
@@ -52,7 +52,7 @@ class BouncyBalls(object):
         self._space.add(static_lines)
 
     def _create_ball(self, position=None):
-        mass = 5
+        mass = 3
         radius = 5
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
         body = pymunk.Body(mass, inertia)
@@ -80,7 +80,9 @@ class Canvas(BaseCanvas):
 class Shape(BaseShape):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.body = self.canvas.space._create_ball(position=self.origin)
+        x, y = self.origin
+        pos = (x * 10.0, y * 10.0)
+        self.body = self.canvas.space._create_ball(position=pos)
         self.body.body.apply_impulse_at_world_point(
             (random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)),
              (random.uniform(0.0, 10.0), random.uniform(0.0, 10.0)))
@@ -88,7 +90,15 @@ class Shape(BaseShape):
     def on_exit(self):
         pass
 
+    def apply_force(self):
+        self.body.body.apply_impulse_at_world_point(
+            (random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)),
+             (random.uniform(0.0, 10.0), random.uniform(0.0, 10.0)))
+
     def generator(self, _time):
+        if _time > self.duration:
+            self.time_start += _time
+            self.apply_force()
         x, y = self.body._body.position.int_tuple
         x /= 10
         y /= 10
@@ -111,7 +121,7 @@ if __name__ == '__main__':
 
     print('Running animation...')
     canvas = Canvas(sim)
-    canvas.shapes = [Shape(canvas=canvas)
+    canvas.shapes = [Shape(canvas=canvas, color_scheme=RainbowColorScheme)
                      for _ in range(num_of_lights)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
