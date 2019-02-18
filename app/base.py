@@ -95,7 +95,7 @@ class BaseShape:
     """
     Base class to control shape generation.
     """
-    def __init__(self, canvas, origin=None, start_time=0.0, color_scheme=BaseColorScheme):
+    def __init__(self, canvas=None, duration=None, origin=None, start_time=0.0, color_scheme=BaseColorScheme):
         self.canvas = canvas
         # Origin location of shape
         self.origin = origin
@@ -103,7 +103,7 @@ class BaseShape:
             self.origin = (random.randint(0, self.canvas.width - 1),
                            random.randint(0, self.canvas.height - 1))
         # Duration of shape in seconds
-        self.duration = random.uniform(3.0, 4.0)
+        self.duration = duration or random.uniform(3.0, 4.0)
         # Current time of creation
         self.time_start = start_time
         self.color_class = color_scheme
