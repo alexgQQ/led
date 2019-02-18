@@ -52,7 +52,7 @@ class BouncyBalls(object):
         self._space.add(static_lines)
 
     def _create_ball(self):
-        mass = 10
+        mass = 5
         radius = 5
         inertia = pymunk.moment_for_circle(mass, 0, radius, (0, 0))
         body = pymunk.Body(mass, inertia)
@@ -104,6 +104,7 @@ if __name__ == '__main__':
     sim = BouncyBalls()
     sim._create_ball()
     point = sim._balls[0]
+    point.body.apply_impulse_at_world_point((1000,0), (0,10))
 
     print('Running animation...')
     canvas = Canvas(sim)
