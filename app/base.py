@@ -238,6 +238,6 @@ if __name__ == '__main__':
 
     print('Running animation...')
     canvas = BaseCanvas()
-    canvas.shapes = [BaseShape(canvas, color_scheme=FlareColorScheme) for _ in range(4)]
+    canvas.shapes = [BaseShape(canvas, color_scheme=BaseColorScheme) for _ in range(4)]
     runner = FrameRunner(led, canvas=canvas, debug=False)
     runner.run()
