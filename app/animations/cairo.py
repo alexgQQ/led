@@ -1,13 +1,19 @@
-import numpy as np
-import random
-import colorsys
-import time
-import traceback
 import cairo
+import math
+import numpy as np
 
-from base import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV
 from neopixel import Adafruit_NeoPixel, Color
-from config import LED_MATRIX_CONFIG
+from app.config import LED_MATRIX_CONFIG
+
+
+class CairoObject(object):
+    def __init__(self):
+        self.width, self.height = 32, 8
+
+        self.surface = cairo.ImageSurface(
+            cairo.FORMAT_RGB24, self.width, self.height)
+        self.ctx = cairo.Context(surface)
+        self.ctx.scale(self.width, self.height)
 
 
 if __name__ == '__main__':
@@ -29,8 +35,8 @@ if __name__ == '__main__':
     ctx.fill()
     buf = surface.get_data()
     data = np.ndarray(shape=(WIDTH, HEIGHT),
-                      dtype=np.uint32,
-                      buffer=buf)
+                        dtype=np.uint32,
+                        buffer=buf)
 
     try:
         led_data[:] = data

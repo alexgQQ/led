@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -yq \
     pkg-config
 
 RUN pip3 install --upgrade pip
-RUN pip3 install pymunk pycairo
+RUN pip3 install pymunk pycairo cairocffi
 
 # Copy Driver source files
 COPY ./lib /leds
