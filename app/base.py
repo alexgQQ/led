@@ -153,9 +153,11 @@ class BaseShape:
 
 
 class FrameRunner:
-    def __init__(self, led, canvas, debug=None):
-        self.led = led
-        self.led_data = led.getPixels()
+    def __init__(self, led, canvas, testing=False, debug=None):
+        self.testing = testing
+        if not testing:
+            self.led = led
+            self.led_data = led.getPixels()
         self.fps = 60.0
         self.canvas = canvas
         self.debug = debug
@@ -174,8 +176,10 @@ class FrameRunner:
                 self.canvas.update()
                 if self.debug:
                     self.debugger()
-                self.led_data[:] = self.canvas.render_frame()
-                self.led.show()
+                data = self.canvas.render_frame()
+                if not self.testing:
+                    self.led_data[:] = data
+                    self.led.show()
                 time.sleep(1.0/self.fps)
         except Exception as error:
             traceback.print_exc()
@@ -183,7 +187,8 @@ class FrameRunner:
         except:
             print('!! Uncaught exception !!')
         print('Exiting application...')
-        self.led.clear()
+        if not self.testing:
+            self.led.clear()
 
 
 class RainbowColorScheme(BaseColorScheme):

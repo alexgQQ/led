@@ -7,8 +7,17 @@ import unittest
 
 from unittest.mock import patch
 
-from base import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV, ColorRGB
-from config import LED_MATRIX_CONFIG
+from .base import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV, ColorRGB
+from .config import LED_MATRIX_CONFIG
+from .physics import PhysicsCanvas, BouncyBalls
+
+
+class TestPhysics(unittest.TestCase):
+
+    def test_physics(self, led_mock):
+        canvas = PhysicsCanvas()
+        canvas.shapes = [canvas.create_shape() for _ in range(5)]
+        canvas.update()
 
 
 # class TestWrapper(unittest.TestCase):
