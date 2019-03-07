@@ -128,7 +128,7 @@ class PhysicsCanvas(BaseCanvas):
             position = self.random_position()
 
         x, y = position
-        ball = BouncyBall(self.space, origin=(x * 10.0, y * 10.0), canvas=self)
+        ball = BouncyBall(self.space, origin=(x, y), canvas=self)
         self.shapes.append(ball)
         return ball
 
@@ -137,25 +137,29 @@ class PhysicsCanvas(BaseCanvas):
         self.sim_space.step()
 
 
-if __name__ == '__main__':
+def main(*args, **kwargs):
+
     parser = argparse.ArgumentParser(description='Number of bouncy balls to generate')
-
     parser.add_argument('-n', action="store", dest="n", type=int, const=1, nargs='?', default=1)
-    parser.add_argument('-test', action='store_true')
+    parser.add_argument('--fake', action='store_false')
     results = parser.parse_args()
-
     num_of_lights = results.n
-    testing = results.test
+    no_led = results.fake
 
     canvas = PhysicsCanvas()
-    canvas.shapes = [canvas.create_shape() for _ in range(num_of_lights)]
+    [canvas.create_shape() for _ in range(num_of_lights)]
 
-    led = False
-    if not testing:
-        print('Starting Adafruit LED driver...')
+    print('Starting Adafruit LED driver...')
+    led=False
+    if no_led:
         led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
         led.begin()
 
     print('Running animation...')
+    testing = not no_led
     runner = FrameRunner(led, canvas=canvas, testing=testing, debug=False)
     runner.run()
+
+
+if __name__ == '__main__':
+    main()
