@@ -76,12 +76,7 @@ class BouncyBall(BaseShape):
         self.shape.elasticity = elasticity
         self.shape.friction = friction
         self.space.add(self.body)
-
-    def __del__(self):
-        """
-        Remove object from simulation when the shape is removed
-        """
-        # self.space.remove(self.shape, self.shape.body)
+        self.apply_force()
 
     def on_exit(self):
         """
@@ -106,7 +101,7 @@ class BouncyBall(BaseShape):
 
     def generator(self, _time):
         x, y = self.position
-        out_of_bounds = (x < 0.0 or x > 31.0 or y < 0.0 or y > 7.0)
+        out_of_bounds = (x < -1.0 or x > 32.0 or y < -1.0 or y > 8.0)
         if out_of_bounds:
             return False
         return [self.position]
@@ -127,8 +122,7 @@ class PhysicsCanvas(BaseCanvas):
         if not position:
             position = self.random_position()
 
-        x, y = position
-        ball = BouncyBall(self.space, origin=(x, y), canvas=self)
+        ball = BouncyBall(self.space, origin=position, canvas=self)
         self.shapes.append(ball)
         return ball
 
