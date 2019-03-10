@@ -23,13 +23,14 @@ case "$1" in
             libcairo2-dev \
             pkg-config
         
-        pip3 install --upgrade pip
-        pip3 install -r requirements.txt
+        python3 -m pip install --upgrade pip
+        python3 -m pip install -r requirements.txt
 
-        cd /libs
+        cd lib
         scons
-        python3 python/setup.py build
-        python3 python/setup.py install
+        cd python
+        python3 setup.py build
+        python3 setup.py install
         ;;
     *) # Catch unsupported args
         echo "Error: Unsupported flag $1"
