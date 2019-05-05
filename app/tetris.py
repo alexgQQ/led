@@ -214,9 +214,7 @@ class TetrisApp(object):
     def __init__(self):
         pygame.init()
         pygame.key.set_repeat(250,25)
-        self.led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
-        self.led.begin()
-        self.led_buffer = self.led.getPixels()
+        self.init_led()
         self.width = 8
         self.height = 32
         self.delay = 750
@@ -225,6 +223,15 @@ class TetrisApp(object):
         self.frame = self.tetris.board
         
         pygame.event.set_blocked(pygame.MOUSEMOTION)
+
+    def init_led(self):
+        self.led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
+        self.led.begin()
+        self.led_buffer = self.led.getPixels()
+
+    def show_led(self):
+        self.led_buffer[:] = self.frame
+        self.led.show()
 
     def gather_frame(self):
         # Process where the current piece is in the frame
@@ -236,8 +243,8 @@ class TetrisApp(object):
                         loc = (y + self.tetris.cPiece.y,x + self.tetris.cPiece.x)
                         self.frame[loc] = ColorRGB.color(*self.tetris.cPiece.color)
 
-        self.led_buffer[:] = self.frame
-        self.led.show()
+        # self.show_led()
+        print(self.frame)
 
     def handle_move(self):
         """ Handle string command as a move """
