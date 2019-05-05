@@ -238,15 +238,15 @@ class TetrisApp(object):
 
         self.led_buffer[:] = self.frame
         self.led.show()
-        
 
-    def handle_move(self, cmd):
+    def handle_move(self):
         """ Handle string command as a move """
-        if cmd == b'left':
+        moves = ['left', 'right', 'none']
+        cmd = random.choice(moves)
+        if cmd == 'left':
             self.tetris.MoveLeft()
-        elif cmd == b'right':
+        elif cmd == 'right':
             self.tetris.MoveRight()
-        self.gather_frame()
 
     def run(self):
         """ Main function to run aplication """
@@ -258,43 +258,49 @@ class TetrisApp(object):
 
         #  Set pygame timer to trigger consistent events
         pygame.time.set_timer(pygame.USEREVENT+1, self.delay)
+        pygame.time.set_timer(pygame.USEREVENT+2, random.randint(500, 2000))
         dont_burn_my_cpu = pygame.time.Clock()
 
         #  Start hosting basic TCP connection for client bot player
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind((HOST, PORT))
-            s.listen()
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     s.bind((HOST, PORT))
+        #     s.listen()
 
-            while True:
-                #  Check for pygame events and process them by type
-                for event in pygame.event.get():
-                    if event.type == pygame.USEREVENT+1:
-                        if not self.tetris.MoveDown():
-                            self.tetris.NewGame()
-                        self.gather_frame()
+        while True:
+            #  Check for pygame events and process them by type
+            for event in pygame.event.get():
+                if event.type == pygame.USEREVENT+1:
+                    if not self.tetris.MoveDown():
+                        self.tetris.NewGame()
+                    self.gather_frame()
+                elif event.type == pygame.USEREVENT+2:
+                    self.handle_move()
+                    self.gather_frame()
+                    pygame.time.set_timer(pygame.USEREVENT+2, 0)
+                    pygame.time.set_timer(pygame.USEREVENT+2, random.randint(500, 2000))
 
-                #  Continue timer events
-                dont_burn_my_cpu.tick(self.fps)
+            #  Continue timer events
+            dont_burn_my_cpu.tick(self.fps)
 
-                #  Look for client connections but unblock the operation
-                client, info = s.accept()
-                client.setblocking(0)
+                # #  Look for client connections but unblock the operation
+                # client, info = s.accept()
+                # client.setblocking(0)
 
-                #  Try to process data if it is there or report conneciton errors
-                with client:
-                    try:
-                        msg = client.recv(100)
-                        if len(msg):
-                            self.handle_move(msg)
-                    except socket.error as e:
-                        err = e.args[0]
-                        if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
-                            print('No data available')
-                            continue
-                        else:
-                            # a "real" error occurred
-                            print(e)
-                            sys.exit(1)
+                # #  Try to process data if it is there or report conneciton errors
+                # with client:
+                #     try:
+                #         msg = client.recv(100)
+                #         if len(msg):
+                #             self.handle_move(msg)
+                #     except socket.error as e:
+                #         err = e.args[0]
+                #         if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
+                #             print('No data available')
+                #             continue
+                #         else:
+                #             # a "real" error occurred
+                #             print(e)
+                #             sys.exit(1)
 
 
 if __name__ == '__main__':
