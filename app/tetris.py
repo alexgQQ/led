@@ -5,9 +5,6 @@ import socket
 import sys
 import errno
 from time import sleep
-from neopixel import Adafruit_NeoPixel, Color
-from config import LED_MATRIX_CONFIG
-from base import ColorRGB
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
@@ -53,8 +50,7 @@ class Pieces():
         (254,249,55), (16,63,251), (44,252,254)]
 
     def GetNewPiece():
-        entropy = random.SystemRandom()
-        pieceNumber = entropy.randrange(1, 8)
+        pieceNumber = random.randint(1, 7)
         return Piece(Pieces.names[pieceNumber], Pieces.allPieces[pieceNumber], Pieces.colors[pieceNumber])
 
     GetNewPiece = staticmethod(GetNewPiece)
@@ -95,6 +91,7 @@ class Piece():
 
 
 class Tetris():
+
     pointsPerRows = [10, 30, 100, 400]
     speedIncrease = 50
     cPiece = None
@@ -210,106 +207,106 @@ class Tetris():
             self.linesRemoved += 1
 
 
-class TetrisApp(object):
-    def __init__(self):
-        pygame.init()
-        pygame.key.set_repeat(250,25)
-        self.init_led()
-        self.width = 8
-        self.height = 32
-        self.delay = 750
-        self.fps = 30
-        self.tetris = Tetris(self.height, self.width)
-        self.frame = self.tetris.board
+# class TetrisApp(object):
+#     def __init__(self):
+#         pygame.init()
+#         pygame.key.set_repeat(250,25)
+#         self.init_led()
+#         self.width = 8
+#         self.height = 32
+#         self.delay = 750
+#         self.fps = 30
+#         self.tetris = Tetris(self.height, self.width)
+#         self.frame = self.tetris.board
         
-        pygame.event.set_blocked(pygame.MOUSEMOTION)
+#         pygame.event.set_blocked(pygame.MOUSEMOTION)
 
-    def init_led(self):
-        self.led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
-        self.led.begin()
-        self.led_buffer = self.led.getPixels()
+#     def init_led(self):
+#         self.led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
+#         self.led.begin()
+#         self.led_buffer = self.led.getPixels()
 
-    def show_led(self):
-        self.led_buffer[:] = self.frame
-        self.led.show()
+#     def show_led(self):
+#         self.led_buffer[:] = self.frame.astype('int')
+#         self.led.show()
 
-    def gather_frame(self):
-        # Process where the current piece is in the frame
-        self.frame = numpy.copy(self.tetris.board)
-        if self.tetris.cPiece is not None:
-            for (y, x), value in numpy.ndenumerate(self.tetris.cPiece.shape):
-                if value != 0:
-                    if (y + self.tetris.cPiece.y) > -1:
-                        loc = (y + self.tetris.cPiece.y,x + self.tetris.cPiece.x)
-                        self.frame[loc] = ColorRGB.color(*self.tetris.cPiece.color)
+#     def gather_frame(self):
+#         # Process where the current piece is in the frame
+#         self.frame = numpy.copy(self.tetris.board)
+#         if self.tetris.cPiece is not None:
+#             for (y, x), value in numpy.ndenumerate(self.tetris.cPiece.shape):
+#                 if value != 0:
+#                     if (y + self.tetris.cPiece.y) > -1:
+#                         loc = (y + self.tetris.cPiece.y,x + self.tetris.cPiece.x)
+#                         self.frame[loc] = ColorRGB.color(*self.tetris.cPiece.color)
 
-        # self.show_led()
-        print(self.frame)
+#         self.show_led()
+#         # print(self.frame)
 
-    def handle_move(self):
-        """ Handle string command as a move """
-        moves = ['left', 'right', 'none']
-        cmd = random.choice(moves)
-        if cmd == 'left':
-            self.tetris.MoveLeft()
-        elif cmd == 'right':
-            self.tetris.MoveRight()
+#     def handle_move(self):
+#         """ Handle string command as a move """
+#         moves = ['left', 'right', 'none']
+#         cmd = random.choice(moves)
+#         if cmd == 'left':
+#             self.tetris.MoveLeft()
+#         elif cmd == 'right':
+#             self.tetris.MoveRight()
 
-    def run(self):
-        """ Main function to run aplication """
-        #  NOTE: Wierd bug where the std output stream is blocked until client data is processed 
-        #        Ex: using a print statement on pygame event will not print on event
-        #            it will print when client data is received
+#     def run(self):
+#         """ Main function to run aplication """
+#         #  NOTE: Wierd bug where the std output stream is blocked until client data is processed 
+#         #        Ex: using a print statement on pygame event will not print on event
+#         #            it will print when client data is received
 
-        self.tetris.NewGame()
+#         self.tetris.NewGame()
 
-        #  Set pygame timer to trigger consistent events
-        pygame.time.set_timer(pygame.USEREVENT+1, self.delay)
-        pygame.time.set_timer(pygame.USEREVENT+2, random.randint(500, 2000))
-        dont_burn_my_cpu = pygame.time.Clock()
+#         #  Set pygame timer to trigger consistent events
+#         pygame.time.set_timer(pygame.USEREVENT+1, self.delay)
+#         pygame.time.set_timer(pygame.USEREVENT+2, random.randint(500, 2000))
+#         dont_burn_my_cpu = pygame.time.Clock()
 
-        #  Start hosting basic TCP connection for client bot player
-        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        #     s.bind((HOST, PORT))
-        #     s.listen()
+#         #  Start hosting basic TCP connection for client bot player
+#         # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+#         #     s.bind((HOST, PORT))
+#         #     s.listen()
 
-        while True:
-            #  Check for pygame events and process them by type
-            for event in pygame.event.get():
-                if event.type == pygame.USEREVENT+1:
-                    if not self.tetris.MoveDown():
-                        self.tetris.NewGame()
-                    self.gather_frame()
-                elif event.type == pygame.USEREVENT+2:
-                    self.handle_move()
-                    self.gather_frame()
-                    pygame.time.set_timer(pygame.USEREVENT+2, 0)
-                    pygame.time.set_timer(pygame.USEREVENT+2, random.randint(500, 2000))
+#         while True:
+#             #  Check for pygame events and process them by type
+#             for event in pygame.event.get():
+#                 if event.type == pygame.USEREVENT+1:
+#                     if not self.tetris.MoveDown():
+#                         self.tetris.NewGame()
+#                     self.gather_frame()
+#                 elif event.type == pygame.USEREVENT+2:
+#                     self.handle_move()
+#                     self.gather_frame()
+#                     pygame.time.set_timer(pygame.USEREVENT+2, 0)
+#                     pygame.time.set_timer(pygame.USEREVENT+2, random.randint(500, 2000))
 
-            #  Continue timer events
-            dont_burn_my_cpu.tick(self.fps)
+#             #  Continue timer events
+#             dont_burn_my_cpu.tick(self.fps)
 
-                # #  Look for client connections but unblock the operation
-                # client, info = s.accept()
-                # client.setblocking(0)
+#                 # #  Look for client connections but unblock the operation
+#                 # client, info = s.accept()
+#                 # client.setblocking(0)
 
-                # #  Try to process data if it is there or report conneciton errors
-                # with client:
-                #     try:
-                #         msg = client.recv(100)
-                #         if len(msg):
-                #             self.handle_move(msg)
-                #     except socket.error as e:
-                #         err = e.args[0]
-                #         if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
-                #             print('No data available')
-                #             continue
-                #         else:
-                #             # a "real" error occurred
-                #             print(e)
-                #             sys.exit(1)
+#                 # #  Try to process data if it is there or report conneciton errors
+#                 # with client:
+#                 #     try:
+#                 #         msg = client.recv(100)
+#                 #         if len(msg):
+#                 #             self.handle_move(msg)
+#                 #     except socket.error as e:
+#                 #         err = e.args[0]
+#                 #         if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
+#                 #             print('No data available')
+#                 #             continue
+#                 #         else:
+#                 #             # a "real" error occurred
+#                 #             print(e)
+#                 #             sys.exit(1)
 
 
-if __name__ == '__main__':
-    App = TetrisApp()
-    App.run()
+# if __name__ == '__main__':
+#     App = TetrisApp()
+#     App.run()

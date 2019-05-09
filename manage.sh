@@ -15,6 +15,7 @@ case "$1" in
             python3-dev \
             python3-pip --no-install-recommends \
             python3-numpy \
+            python3-setuptools \
             build-essential \
             libjpeg-dev \
             swig    \
