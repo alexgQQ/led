@@ -1,5 +1,6 @@
 from flask import Flask, request, abort
 import numpy as np
+import json
 from neopixel import Adafruit_NeoPixel
 from config import LED_MATRIX_CONFIG
 from base import ColorRGB, ColorHSV
@@ -38,7 +39,7 @@ app = Flask(__name__)
 def board():
     try:
         if request.method == 'POST':
-            data = request.json.copy()
+            data = json.loads(request.data.decode())
             array = np.array(data['data'])
             led.set_leds(array)
         return 'Ok'
