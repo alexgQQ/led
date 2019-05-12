@@ -3,7 +3,7 @@ import random
 import numpy as np
 import argparse
 
-from base import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV
+from canvas import BaseCanvas, BaseColorScheme, FrameRunner, BaseShape, ColorHSV
 from neopixel import Adafruit_NeoPixel, Color
 from config import LED_MATRIX_CONFIG
 

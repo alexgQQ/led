@@ -5,6 +5,7 @@ import time
 import traceback
 from neopixel import Adafruit_NeoPixel, Color
 from config import LED_MATRIX_CONFIG
+from ..base.base import ColorRGB, ColorHSV
 
 
 class ColorRGB:
@@ -31,6 +32,40 @@ class ColorHSV(ColorRGB):
     def color_hsv(cls, hue, saturation, value):
         """ Convert individual hsv colors to single integer """
         return cls.color_rgb(*cls.hsv2rgb(hue, saturation, value))
+
+
+class AbstractColorEncoder:
+    COLOR_CLASS = None
+
+    @classmethod
+    def enocde(cls, data):
+        def color(values):
+            return cls.COLOR_CLASS.color(*values)
+
+        return np.apply_along_axis(color, 2, data)
+
+
+class RGBColorEncoder(AbstractColorEncoder):
+    COLOR_CLASS = ColorRGB
+
+
+class HSVColorEncoder(AbstractColorEncoder):
+    COLOR_CLASS = ColorHSV
+
+
+class LED:
+    def __init__(self, *args, **kwargs):
+        self._led = Adafruit_NeoPixel(**LED_MATRIX_CONFIG)
+        self.color_encoder = kwargs.get('color_encoder', ColorRGB)
+        self._led.begin()
+
+    def set_leds(self, data):
+        led_data = self.color_encoder.encode(data)
+        self._led._led_data[:] = led_data
+        self._led.show()
+
+    def clear_leds(self):
+        self._led.clear()
 
 
 class BaseCanvas:

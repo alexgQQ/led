@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -yq \
     python3-pip --no-install-recommends \
     python3-numpy \
     python3-setuptools \
+    python3-pygame \
     build-essential \
     libjpeg-dev \
     swig    \

@@ -1,3 +1,6 @@
+// TODO: refacotr array usage to https://github.com/nicolaspanel/numjs
+
+
 const width = 32;
 const height = 8;
 const off_color = '#000000';
