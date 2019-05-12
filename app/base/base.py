@@ -35,7 +35,7 @@ class AbstractColorEncoder:
     COLOR_CLASS = None
 
     @classmethod
-    def enocde(cls, data):
+    def encode(cls, data):
         def color(values):
             return cls.COLOR_CLASS.color(*values)
 

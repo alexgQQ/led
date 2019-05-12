@@ -6,7 +6,7 @@ case "$1" in
         ;;
     test)
         echo 'Running local tests...'
-        docker run --rm -it --privileged --mount type=bind,source=${PWD}/app,target=/app led-control:latest python3 /app/tests.py
+        docker run --rm -it --privileged --mount type=bind,source=${PWD}/app,target=/app led-control:latest python3 -m app.tests.unit_tests
         ;;
     install)
         echo 'Installing base deps ...'

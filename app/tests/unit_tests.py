@@ -29,12 +29,12 @@ class TestColorEncoders(unittest.TestCase):
 
     def test_color_rgb(self):
         test_data = np.random.randint(0, high=256, size=(32, 8, 3))
-        result = RGBColorEncoder.enocde(test_data)
+        result = RGBColorEncoder.encode(test_data)
         self.assertEqual(result.shape, (32, 8))
 
     def test_color_hsv(self):
         test_data = np.random.rand(32, 8, 3)
-        result = HSVColorEncoder.enocde(test_data)
+        result = HSVColorEncoder.encode(test_data)
         self.assertEqual(result.shape, (32, 8))
 
 

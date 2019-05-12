@@ -12,8 +12,8 @@ class TetrisApp(object):
         pygame.display.init()
         pygame.key.set_repeat(250,25)
         pygame.event.set_blocked(pygame.MOUSEMOTION)
-        self.width = 8
-        self.height = 32
+        self.width = 32
+        self.height = 8
         self.delay = 750
         self.fps = 30
         self.tetris = Tetris(self.height, self.width)
