@@ -1,4 +1,4 @@
-
+import os
 
 # Main driver settings
 
@@ -10,4 +10,11 @@ LED_MATRIX_CONFIG = dict(
     brightness=150,     # Set to 0 for darkest and 255 for brightest
     invert=False,       # True to invert the signal (when using NPN transistor level shift)
     channel=0,          # set to '1' for GPIOs 13, 19, 41, 45 or 53
+)
+
+CLIENT_CONFIG = dict(
+    PROTOCOL='http://',
+    HOST='192.168.0.16',
+    PORT=5000,
+    ROUTE='/board',
 )

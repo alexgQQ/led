@@ -10,6 +10,7 @@ from ..base.base import (
     LedMatrix,
 )
 from ..web.web_api import app
+from ..web.client import Client
 
 
 class TestColorClasses(unittest.TestCase):
@@ -58,6 +59,17 @@ class TestAPI(unittest.TestCase):
         payload = np.random.randint(0, high=256, size=(32, 8, 3)).tolist()
         response = self.app.post('/board', json=dict(data=payload))
         self.assertEqual(response.status_code, 200)
+
+
+class TestAPICLient(unittest.TestCase):
+
+    @patch('app.web.client.requests.post')
+    def test_post(self, post_mock):
+        data = np.random.randint(0, high=256, size=(32, 8, 3))
+        test_client = Client()
+        serialized_data = test_client.serialize(data)
+        response = test_client.post(data)
+        post_mock.assert_called_with(test_client.URL, json=serialized_data)
 
 
 if __name__ == '__main__':
